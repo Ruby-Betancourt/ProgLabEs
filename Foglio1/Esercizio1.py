@@ -42,9 +42,9 @@ def somma_vettoriale(a,b):
     return new_list            
 
 
-#prova=[0,0,1,0,0]
-#stampa(prova)
-#statistiche(prova)
+prova=[6,3,1,2,4]
+stampa(prova)
+statistiche(prova)
 
 test_a=[1,8,3,4,2]
 test_b=[4,0,2,1,5]
