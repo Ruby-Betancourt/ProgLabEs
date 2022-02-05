@@ -28,21 +28,32 @@ def compute_avg_monthly_difference(lista, start, end):
         lista_finale = []
         media = 0
         t=end-start
-
-        for i in range t:
+        temp = []
+        
+        for i in range (t+1):
             list_anno = []
             list_anno.append(start+i)
+            temp.append(list_anno)
         
         lis_year = []
-
         for el in lista:
             elem = el[0].split('-')
             if int(elem[0]) == start:
                 lis_year.append(el[1])
-                
+
+        c = end
+        i=0
+        for el in lista:
+            elem = el[0].split('-')
+            if int(elem[0]) == c:
+                temp[i].append(el[1])
+            
+            c-=1  
+            i+=1     
+                       
     
-        return lista_finale
-        #for el in lista:
+        return temp
+
                     
 
 class CVSTimeSeriesFile():

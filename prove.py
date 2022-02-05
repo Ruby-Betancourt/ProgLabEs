@@ -3,10 +3,12 @@ start = 1949
 end = 1951
 t=end-start
 
-for i in range (t):
+for i in range (t+1):
     lis = []
     lis.append(start+i)
     lista.append(lis)
+
+
 
 listaa = [1949, 2,4,5]
 listab = [1950, 5,6,7]
@@ -17,6 +19,6 @@ c = end
 while c!=0:
     
     diff=listac[1]-listab[1]
+    c-=1
 
-
-print (lista)
+print (len(listaa))
