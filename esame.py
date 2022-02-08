@@ -45,6 +45,14 @@ class CVSTimeSeriesFile():
 def compute_avg_monthly_difference(lista, start, end):
     #inizio controlli
     
+    #controllo che sia una stringa
+    #isinstance()
+
+    #controllo che non sia una stringa vuota
+
+    #controllo che sia una stringa di numeri
+    #isdigit()
+
     start=int(start)
     end=int(end)
 
@@ -64,9 +72,12 @@ def compute_avg_monthly_difference(lista, start, end):
     #if end<0:
     #    raise ExamException('Error, end è negativo')
 
+    # controllo che start non sia minore di 1949 cioe la prima data
+
     #3 controllo ordine
     #if start>end:
     #    raise ExamException('Error, forse hai invertito start e end, start non può essere maggiore di end')
+
 
 
     #inizio funzione
@@ -74,7 +85,7 @@ def compute_avg_monthly_difference(lista, start, end):
     media = 0
     t=end-start
     temp = []
-    somma=[]
+    somma=0
         
     for i in range (t+1):
         list_anno = []
@@ -94,10 +105,21 @@ def compute_avg_monthly_difference(lista, start, end):
         
             if int(elem[0]) == dat[0]:
                 dat.append(el[1])  
-                 
-    
 
-    return temp
+    i=1
+    #j=t+1
+    while i<=12:
+        #while j>=0:
+        for j in range(t):
+            diff = temp[j+1][i]-temp[j][i]
+            #print(temp[j][i])
+            #print(diff)
+            somma+=diff
+            #j-=1
+        lista_finale.append(somma/t)
+        i+=1    
+
+    return lista_finale
 
 
 

@@ -8,6 +8,21 @@ for i in range (t+1):
     lis.append(start+i)
     lista.append(lis)
 
+i=1
+j=t+1
+while i<=12:
+    while j>=0:
+        diff = temp[j][i]-temp[j-1][i]
+        somma+=diff
+        j-=1
+    media.append(somma/t)
+    i+=1
+
+i=1
+while i<=12:
+    for j in range(t+1):
+         
+
 
 
 listaa = [1949, 2,4,5]
