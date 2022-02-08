@@ -106,18 +106,14 @@ def compute_avg_monthly_difference(lista, start, end):
             if int(elem[0]) == dat[0]:
                 dat.append(el[1])  
 
-    i=1
-    #j=t+1
-    while i<=12:
-        #while j>=0:
+    m=1
+    while m<=12:
         for j in range(t):
-            diff = temp[j+1][i]-temp[j][i]
-            #print(temp[j][i])
-            #print(diff)
+            diff = temp[j+1][m]-temp[j][m]
             somma+=diff
-            #j-=1
         lista_finale.append(somma/t)
-        i+=1    
+        somma=0
+        m+=1    
 
     return lista_finale
 
