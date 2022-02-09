@@ -3,7 +3,7 @@ from datetime import datetime
 class ExamException(Exception):
     pass                  
 
-class CVSTimeSeriesFile():
+class CSVFile():
     #inizializzo la classe
     def __init__(self, name):
         self.name = name
@@ -11,33 +11,62 @@ class CVSTimeSeriesFile():
         #controllo che sia una stringa
         if not isinstance(self.name, str):
             raise ExamException('TypeError, il nome "{}" non è una stringa'. format(self.name))
-
-
+    
     def get_data(self):
-        #inizializzo la futura lista di liste
+        #inizializzo futura la lista di liste
         finish_list = []
 
-        #provo ad aprire il file
+         #provo ad aprire il file
         try:
             my_file = open(self.name, 'r')
         except:
             #in caso non riesca ad aprire il file
-            raise ExamException('NotFoundError, file non esiste o non è legibile')    
+            raise ExamException('NotFoundError, file non esiste o non è legibile')
+
 
         for line in my_file:
-            #separo la stringa sulla virgola 
+            #separo la stringa sulla virgola
             elements = line.split(',')
- 
+
             #elimino il carattere '\n'
             elements[-1] = elements[-1].strip()
 
+            #aggiungo ogni lista nella lista finale
             if elements[0] != 'date':
-                #controllo che i dati passeggeri si possano trasformare in intero
-                if not elements[1].isdigit():
-                    raise ExamException('Error, {} non è un numero velodo per la media'. format(elements[1]))
+                finish_list.append(elements)  
+        
+        #chiudo il file e return la lista di liste
+        my_file.close()
+        return finish_list
 
-                #trasformo tutti i dati del passeggeri in int
-                elements[1] = int(elements[1])
+
+
+class CSVTimeSeriesFile(CSVFile):
+
+    def get_data(self):
+        data = super().get_data()
+        new_list = []
+
+        for item in data:
+
+            #controllo dei dati passeggero
+            #controllo che ci siano
+            if len(item)<2:
+                #altrimenti lo metto come None
+                item.append(None)
+
+            #controllo che non siano una stringa vuota
+            elif item[1]=='':
+                item[1]= None 
+                
+            #controllo che si possano trasformare in intero
+            elif not item[1].isdigit():
+                item[1]=None
+                #    raise ExamException('Error, {} non è un numero velodo per la media'. format(elements[1]))
+
+                #trasformo tutti i dati accettabili del passeggeri in int
+                else:
+                    elements[1] = int(elements[1])
                 #aggiungo ogni lista nella lista finale
                 finish_list.append(elements)  
 
@@ -113,16 +142,18 @@ def compute_avg_monthly_difference(lista, start, end):
                 data.append(item[1])  
 
     #controlli sui dati dei passeggeri
-    for item in passengers:
-        for element in item:
+    #for item in passengers:
+    #    for element in item:
             
 
     #calcolo la media per ogni mese
     while m<=12:
         for y in range(tot_anni):
-
-            diff = passengers[y+1][m]-passengers[y][m]
-            somma+=diff
+            if passengers[y+1][m]==None or passengers[y][m]==None:
+                somma = 0
+            else:
+                diff = passengers[y+1][m]-passengers[y][m]
+                somma+=diff
         lista_finale.append(somma/tot_anni)
         somma=0
         m+=1    
