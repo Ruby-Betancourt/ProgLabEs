@@ -46,14 +46,21 @@ class CSVTimeSeriesFile(CSVFile):
     def get_data(self):
         data = super().get_data()
         new_list = []
-
+        
+        
+        #ciclo per controllare i dati passeggero
         for item in data:
-
-            #controllo dei dati passeggero
             #controllo che ci siano
             if len(item)<2:
-                #altrimenti lo metto come None
-                item.append(None)
+                #controllo se l'elemento è una data
+                try:
+                    date1=datetime.strptime(item[0], '%Y-%m')
+                    #allora aggiungo i dati passeggeri come None
+                    item.append(None)
+                except:
+                    #altrimenti salto la riga
+                    continue
+                
 
             #controllo che non siano una stringa vuota
             elif item[1]=='':
@@ -62,18 +69,38 @@ class CSVTimeSeriesFile(CSVFile):
             #controllo che si possano trasformare in intero
             elif not item[1].isdigit():
                 item[1]=None
-                #    raise ExamException('Error, {} non è un numero velodo per la media'. format(elements[1]))
 
-                #trasformo tutti i dati accettabili del passeggeri in int
-                else:
-                    elements[1] = int(elements[1])
-                #aggiungo ogni lista nella lista finale
-                finish_list.append(elements)  
+            #trasformo tutti i dati accettabili del passeggeri in int
+            else:
+                item[1] = int(item[1])
+            
+            #controllo se il primo elemento è una data
+            try:
+                date1=datetime.strptime(item[0], '%Y-%m')
+                #allora aggiungo i dati passeggeri come None
+                item.append(None)
+            except:
+                #altrimenti salto la riga
+                continue    
 
 
-        #chiudo il file e return la lista di liste
-        my_file.close()
-        return finish_list 
+            #aggiungo ogni lista nella nuova lista corretta 
+            new_list.append(item[:2])  
+
+
+        #prima data dell'intero file come termine di paragone
+        date1=data[0][0]
+        #ciclo per controllare che le date siano strettamente crescenti
+        for item in new_list[1:]:
+            #date_=datetime.strptime(item[0], '%Y-%m')
+            #controllo siano crescenti e non si ripetano
+            if date1>=item[0]:
+                raise ExamException('Error, le date nel fine non sono in ordine, {} va dopo {}'. format(date1, item[0]))
+            date1 = item[0]   
+        
+
+        #ritorno la lista corretta
+        return new_list 
 
 
 
@@ -124,11 +151,11 @@ def compute_avg_monthly_difference(lista, start, end):
     tot_anni = end-start
     passengers = []
     somma=0
-    m=1
+    m=0
 
     #creo una lista per ogni anno che devo considerare    
     for i in range (tot_anni+1):
-        lista_anno = []
+        lista_anno = [None,None,None,0,0,0,0,0,0,0,0,0]
         #il primo elemento di ogni lista è l'anno 
         lista_anno.append(start+i)
         passengers.append(lista_anno)
@@ -138,31 +165,27 @@ def compute_avg_monthly_difference(lista, start, end):
         for item in lista:
             elem = item[0].split('-')
             #solo se l'anno corrisponde all'anno nella lista i dati vengono aggiunti
-            if int(elem[0]) == data[0]:
-                data.append(item[1])  
-
-    #controlli sui dati dei passeggeri
-    #for item in passengers:
-    #    for element in item:
+            if int(elem[0]) == data[-1]:
+                data[int(elem[1])-1] = item[1]  
             
 
     #calcolo la media per ogni mese
-    while m<=12:
+    while m<11:
+    #for m in range(11):
         for y in range(tot_anni):
             if passengers[y+1][m]==None or passengers[y][m]==None:
-                somma = 0
+                diff = 0
             else:
                 diff = passengers[y+1][m]-passengers[y][m]
-                somma+=diff
+            somma+=diff
         lista_finale.append(somma/tot_anni)
-        somma=0
-        m+=1    
+        somma=0 
+        m+=1  
 
     return lista_finale
 
 
-
-time_series_file = CVSTimeSeriesFile(name='data.csv')
+time_series_file = CSVTimeSeriesFile(name='data.csv')
 time_series = time_series_file.get_data() 
 #print(time_series) 
 

@@ -1,41 +1,55 @@
+from datetime import datetime
+
 lista=[]
-#start = 1949
-#end = 1951
-#t=end-start
+start = 1949
 t=2
-
-#for i in range (t+1):
- #   lis = []
- #   lis.append(start+i)
- #   lista.append(lis)
+temp=[['1949-01',42],['1949-02',48],['1949-03',10],['1950-01',72],['1950-02',45],['1950-03',90],['1951-01',70],['1951-02',24],['1951-03',18]]
 
 
-s='1949-05,'
-s1='1949-02'
-elements = s1.split(',')
-#print(elements)
+for i in range (t+1):
+    lis = [None,None,None]
+    lis.append(start+i)
+    lista.append(lis)
+#print(lista)
 
-ti='ciao '
-result=ti.isdigit()
-print(result)
+for data in lista:
+    for item in temp:
+        elem = item[0].split('-')
+        if int(elem[0]) == data[-1]:
+            data[int(elem[1])-1] = item[1]
 
+
+print(lista)
+
+l=[]
 somma=0
-temp=[[1,2,3,4],[1,6,7,8],[1,4,8,10]]
-m=1 
-while m<=3:
+
+m=0
+#for m in range(3):
+while m<3:    
     for j in range(t):
-        diff = temp[j+1][m]-temp[j][m]
-        #print(temp[j+1][m])
-        #print(temp[j][m])
-        #print(diff)
+        if lista[j+1][m]==None or lista[j][m]==None:
+            diff = 0
+        else:
+            diff = lista[j+1][m]-lista[j][m]
         somma+=diff
-        #print('somma')
-        #print(somma)
-    media = somma/t
-    #print('media')
-    #print(media)    
-    lista.append(media)
+    #media = somma/t
+       
+    l.append(somma/t)
+    somma = 0 
     m+=1    
          
-#print (lista)
+print (l)
+
+date1=datetime.strptime(temp[0][0], '%Y-%m')
+for item in temp[1:]:
+    #contorllo le date
+    date_=datetime.strptime(item[0], '%Y-%m')
+    #controllo siano crescenti e non si ripetano
+    if date1>=date_:
+        print('raise error')
+    date1 = date_
+
+    
+        
 
