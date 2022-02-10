@@ -10,13 +10,13 @@ for i in range (t+1):
     lis = [None,None,None]
     lis.append(start+i)
     lista.append(lis)
-#print(lista)
+print(lista)
 
 for data in lista:
     for item in temp:
         elem = item[0].split('-')
         if int(elem[0]) == data[-1]:
-            data[int(elem[1])-1] = item[1]
+            data[int(elem[1])] = item[1]
 
 
 print(lista)
@@ -24,9 +24,9 @@ print(lista)
 l=[]
 somma=0
 
-m=0
+m=1
 #for m in range(3):
-while m<3:    
+while m<=3:    
     for j in range(t):
         if lista[j+1][m]==None or lista[j][m]==None:
             diff = 0

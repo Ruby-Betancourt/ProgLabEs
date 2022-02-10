@@ -10,49 +10,52 @@ class CSVFile():
         
         #controllo che sia una stringa
         if not isinstance(self.name, str):
-            raise ExamException('TypeError, il nome "{}" non è una stringa'. format(self.name))
+            raise ExamException('TypeError, "{}" non è una stringa'. format(self.name))
     
+
     def get_data(self):
-        #inizializzo futura la lista di liste
+        #inizializzo la lista finale che conterrà le altre minori
         finish_list = []
 
-         #provo ad aprire il file
+        #provo ad aprire il file
         try:
             my_file = open(self.name, 'r')
         except:
             #in caso non riesca ad aprire il file
             raise ExamException('NotFoundError, file non esiste o non è legibile')
 
-
         for line in my_file:
             #separo la stringa sulla virgola
             elements = line.split(',')
 
-            #elimino il carattere '\n'
+            #elimino tutti caratteri '\n' per amdare a capo
             elements[-1] = elements[-1].strip()
 
-            #aggiungo ogni lista nella lista finale
+            #aggiungo le liste minori nella lista finale
             if elements[0] != 'date':
                 finish_list.append(elements)  
         
-        #chiudo il file e return la lista di liste
+        #chiudo il file e return la lista finale completa
         my_file.close()
         return finish_list
 
 
-
+#sottoclasse di CSVFile che eredita l'init
 class CSVTimeSeriesFile(CSVFile):
 
     def get_data(self):
+        #richiamo il metodo della classe madre
         data = super().get_data()
         new_list = []
-        
         
         #ciclo per controllare i dati passeggero
         for item in data:
             #controllo che ci siano
             if len(item)<2:
-                #controllo se l'elemento è una data
+                #controllo che non sia una lista vuota
+                if item == []:
+                    raise ExamException('Error, lista vuota')
+                #controllo se l'unico elemento presente è una data
                 try:
                     date1=datetime.strptime(item[0], '%Y-%m')
                     #allora aggiungo i dati passeggeri come None
@@ -61,7 +64,6 @@ class CSVTimeSeriesFile(CSVFile):
                     #altrimenti salto la riga
                     continue
                 
-
             #controllo che non siano una stringa vuota
             elif item[1]=='':
                 item[1]= None 
@@ -70,15 +72,14 @@ class CSVTimeSeriesFile(CSVFile):
             elif not item[1].isdigit():
                 item[1]=None
 
-            #trasformo tutti i dati accettabili del passeggeri in int
+            #trasformo i dati dei passeggeri in intero
             else:
                 item[1] = int(item[1])
             
+            #controllo le date
             #controllo se il primo elemento è una data
             try:
                 date1=datetime.strptime(item[0], '%Y-%m')
-                #allora aggiungo i dati passeggeri come None
-                item.append(None)
             except:
                 #altrimenti salto la riga
                 continue    
@@ -135,15 +136,15 @@ def compute_avg_monthly_difference(lista, start, end):
 
 
     #controllo che siano compresi nel file 
-    if start<1949:
-        raise ExamException('Error, l\'anno iniziale non compare nel file')
+    #if start<1949:
+     #   raise ExamException('Error, l\'anno iniziale non compare nel file')
 
-    if end>1960:
-        raise ExamException('Error, l\'anno finale non compare nel file')
+    #if end>1960:
+     #   raise ExamException('Error, l\'anno finale non compare nel file')
 
     #controllo che l'ordine delle date sia giusto
     if start>end:
-        raise ExamException('Error, forse hai invertito start e end, start non può essere maggiore di end')
+        raise ExamException('Error, forse hai invertito l\'anno iniziale e finale, start non può essere maggiore di end')
 
 
     #inizio funzione
@@ -155,8 +156,8 @@ def compute_avg_monthly_difference(lista, start, end):
 
     #creo una lista per ogni anno che devo considerare    
     for i in range (tot_anni+1):
-        lista_anno = [None,None,None,0,0,0,0,0,0,0,0,0]
-        #il primo elemento di ogni lista è l'anno 
+        lista_anno = [None,None,None,None,None,None,None,None,None,None,None,None]
+        #l'ultimo elemento di ogni lista è l'anno di cui fanno riferimento i dati
         lista_anno.append(start+i)
         passengers.append(lista_anno)
 
@@ -170,9 +171,10 @@ def compute_avg_monthly_difference(lista, start, end):
             
 
     #calcolo la media per ogni mese
-    while m<11:
+    while m<=11:
     #for m in range(11):
         for y in range(tot_anni):
+            #gestisco i casi particolari
             if passengers[y+1][m]==None or passengers[y][m]==None:
                 diff = 0
             else:
@@ -187,7 +189,7 @@ def compute_avg_monthly_difference(lista, start, end):
 
 time_series_file = CSVTimeSeriesFile(name='data.csv')
 time_series = time_series_file.get_data() 
-#print(time_series) 
+print(time_series) 
 
 media = compute_avg_monthly_difference(time_series, '1949', '1951')
 print(media) 
